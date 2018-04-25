@@ -7,7 +7,7 @@ class WaitingForKeywordState(State):
     """
     
     def on_event(self, event):
-        if event == 'follow_me':
+        if event == 'go':
             return FollowState()
         return self
 

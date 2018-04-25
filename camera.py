@@ -12,24 +12,49 @@ from skimage import measure
 import numpy as np
 import imutils
 
+from threading import Thread
+
 class Camera():
 
-    def __init__(self):
+    def __init__(self, resolution=(640,480), framerate=30):
         self.camera = PiCamera();
-        self.camera.resolution = (640,480)
-        self.camera.framerate = 30
-        self.rawCapture = PiRGBArray(self.camera, size=(640, 480))
-        self.image = []
-        time.sleep(0.1)
-    
+        self.camera.resolution = resolution
+        self.camera.framerate = framerate
+        self.rawCapture = PiRGBArray(self.camera, size=resolution)
+        self.stream = self.camera.capture_continuous(self.rawCapture, format="bgr", use_video_port=True)
+        self.frame = None
+        self.stopped = False
+        time.sleep(1.0)
+
+    def startStream(self):
+            Thread(target=self.update, args=()).start()
+            return self
+
+    def updateFrame(self):
+        for f in self.stream:
+            self.frame = f.array
+            self.rawCapture.truncate(0)
+
+            if self.stopped:
+                self.stream.close()
+                self.rawCapture.close()
+                self.camera.close()
+                return
+
+    def read(self):
+        return self.frame
+
+    def stop(self):
+        self.stopped = True
+
     def grabImage(self):
         self.camera.capture(self.rawCapture, format="bgr")
-        self.image = self.rawCapture.array
+        self.frame = self.rawCapture.array
 
     def streamVideo(self):
-        for frame in self.camera.capture_continuous(self.rawCapture, format="bgr", use_video_port=True):
-            self.image = frame.array
-            cv2.imshow("Frame", self.image)
+        for im in self.stream:
+            self.frame = im.array
+            cv2.imshow("Frame", self.frame)
             key = cv2.waitKey(1) & 0xFF
             self.rawCapture.truncate(0)
 
@@ -38,11 +63,11 @@ class Camera():
 
 
     def dispImage(self):
-        cv2.imshow("Image", self.image)
+        cv2.imshow("Image", self.frame)
         cv2.waitKey(0)
 
     def detectSingleBrightSpot(self):
-        im = self.image
+        im = self.frame
         orig = im.copy()
         gray_image = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
         blurred = cv2.GaussianBlur(gray_image, (7, 7), 0)
@@ -56,7 +81,7 @@ class Camera():
         
 
     def detectBrightSpots(self):
-        im = self.image
+        im = self.frame
         gray_image = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
         blurred = cv2.GaussianBlur(gray_image, (11, 11), 0)
         
@@ -99,7 +124,7 @@ class Camera():
         hog = cv2.HOGDescriptor()
         hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
 
-        im = self.image
+        im = self.frame
         im = imutils.resize(im, width=min(400, im.shape[1]))
         orig = im.copy()
 
