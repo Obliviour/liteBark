@@ -24,10 +24,10 @@ class Camera():
         self.stream = self.camera.capture_continuous(self.rawCapture, format="bgr", use_video_port=True)
         self.frame = None
         self.stopped = False
-        time.sleep(1.0)
+        
 
     def startStream(self):
-            Thread(target=self.update, args=()).start()
+            Thread(target=self.updateFrame, args=()).start()
             return self
 
     def updateFrame(self):
@@ -44,7 +44,7 @@ class Camera():
     def read(self):
         return self.frame
 
-    def stop(self):
+    def close(self):
         self.stopped = True
 
     def grabImage(self):
@@ -137,7 +137,7 @@ class Camera():
 
         # apply non-maxima suppression to the bounding boxes using a fiarly large overlap threshold to try to maintain overlapping
         rects = np.array([[x, y, x + w, y + h] for (x, y, w, h) in rects])
-        pick = non_max_suppression(rects, probs=None, overlapThresh=0.65)
+        pick = non_max_suppression(rects, probs=None, overlapThresh=0.5)
 
         # draw final bounding boxes
         for (xA, yA, xB, yB) in pick:
@@ -148,9 +148,15 @@ class Camera():
         cv2.imshow("After", im)
         cv2.waitKey(0)  
 
-
+    def testMethod(self):
+        starttime = time.time()
+        while True:
+            self.detectHuman()
+            print "tick"
+            time.sleep(5.0)
 
 if __name__ == '__main__':
     cam = Camera()
-    cam.streamVideo()
-    cam.detectSingleBrightSpot()
+    cam.startStream()
+    time.sleep(1.0)
+    cam.testMethod()

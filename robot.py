@@ -1,104 +1,100 @@
 import time
 from gpiozero import PWMOutputDevice
 from gpiozero import DigitalOutputDevice
-from camera import Camera
 from imutils.object_detection import non_max_suppression
 import numpy  as np
 import imutils
 import cv2
 
-from RobotState import WaitingForKeywordState
+from state import State
+from RobotState import Idle
+from microphone import Microphone
+from camera import Camera
 ## Motor Driver GPIO Pins
 # Motor A, Left Side GPIO CONSTANTS
 PWM_DRIVE_LEFT   = 21
-PWM_LEFT_PIN     = 26
+FORWARD_LEFT_PIN     = 26
 REVERSE_LEFT_PIN = 19
 # Motor B, Right Side GPIO CONSTANTS
 PWM_DRIVE_RIGHT   = 5
 FORWARD_RIGHT_PIN = 13
 REVERSE_RIGHT_PIN = 6
 
-
-
-
-class robot(State):
+class Robot(State):
     def __init__(self):
         #set up GPIO
         self.driveLeft  = PWMOutputDevice(PWM_DRIVE_LEFT, True, 0, 1000)
-        self.driveRight = PWMOutputDevice(PWM_DRIVE_RIGHT, True, 0 1000)
+        self.driveRight = PWMOutputDevice(PWM_DRIVE_RIGHT, True, 0, 1000)
 
         self.forwardLeft  = DigitalOutputDevice(FORWARD_LEFT_PIN)
         self.reverseLeft  = DigitalOutputDevice(REVERSE_LEFT_PIN)
         self.forwardRight = DigitalOutputDevice(FORWARD_RIGHT_PIN)
         self.reverseRight = DigitalOutputDevice(REVERSE_RIGHT_PIN)
         
+        # Set up sensors
         self.camera = Camera()
-        # Microphone class not yet implemented
-        #self.microphone = microphone()
+        self.microphone = Microphone()
 
-        self.state = WaitingForKeywordState()
+        self.state = Idle()
 
-    def on_event(self, event)
+    def on_event(self, event):
         self.state = self.state.on_event(event)
 
-    def allStop():
-        forwardLeft.value = False
-        reverseLeft.value = False
-        forwardRight.value = False
-        reverseRight.value = False
-        driveLeft.value = 0
-        driveRight.value = 0
+    def allStop(self):
+        self.forwardLeft.value = False
+        self.reverseLeft.value = False
+        self.forwardRight.value = False
+        self.reverseRight.value = False
+        self.driveLeft.value = 0
+        self.driveRight.value = 0
         
-    def goForward():
-        forwardLeft.value = True
-        reverseLeft.value = False
-        forwardRight.value = True
-        reverseRight.value = False
-        driveLeft.value = 1.0
-        driveRight.value = 1.0
+    def goForward(self):
+        self.forwardLeft.value = True
+        self.reverseLeft.value = False
+        self.forwardRight.value = True
+        self.reverseRight.value = False
+        self.driveLeft.value = 1.0
+        self.driveRight.value = 1.0
 
-    def goBackward():
-        forwardLeft.value = False
-        reverseLeft.value = True
-        forwardRight.value = False
-        reverseRight.value = True
-        driveLeft.value = 1.0
-        driveRight.value = 1.0
+    def goBackward(self):
+        self.forwardLeft.value = False
+        self.everseLeft.value = True
+        self.orwardRight.value = False
+        self.reverseRight.value = True
+        self.driveLeft.value = 1.0
+        self.driveRight.value = 1.0
 
-    def rotateRight():
-        forwardLeft.value = True
-        reverseLeft.value = False
-        forwardRight.value = False
-        reverseRight.value = True
-        driveLeft.value = 1.0
-        driveRight.value = 1.0
+    def rotateRight(self):
+        self.forwardLeft.value = True
+        self.reverseLeft.value = False
+        self.forwardRight.value = False
+        self.reverseRight.value = True
+        self.driveLeft.value = 1.0
+        self.driveRight.value = 1.0
 
-    def rotateLeft():
-        forwardLeft.value = False
-        reverseLeft.value = True
-        forwardRight.value = True
-        reverseRight.value = False
-        driveLeft.value = 1.0
-        driveRight.value = 1.0
+    def rotateLeft(self):
+        self.forwardLeft.value = False
+        self.reverseLeft.value = True
+        self.forwardRight.value = True
+        self.reverseRight.value = False
+        self.driveLeft.value = 1.0
+        self.driveRight.value = 1.0
 
-    def bankRight():
-        forwardLeft.value = True
-        reverseLeft.value = False
-        forwardRight.value = True
-        reverseRight.value = False
-        driveLeft.value = 0.8
-        driveRight.value = 0.2
+    def bankRight(self):
+        self.forwardLeft.value = True
+        self.reverseLeft.value = False
+        self.forwardRight.value = True
+        self.reverseRight.value = False
+        self.driveLeft.value = 0.8
+        self.driveRight.value = 0.2
 
-    def bankLeft():
-        forwardLeft.value = True
-        reverseLeft.value = False
-        forwardRight.value = True
-        reverseRight.value = False
-        driveLeft.value = 0.2
-        driveRight.value = 0.8
-
-
-    
+    def bankLeft(self):
+        self.forwardLeft.value = True
+        self.reverseLeft.value = False
+        self.forwardRight.value = True
+        self.reverseRight.value = False
+        self.driveLeft.value = 0.2
+        self.driveRight.value = 0.8
             
     def detectHuman(self):
         hog = cv2.HOGDescriptor()
@@ -121,34 +117,111 @@ class robot(State):
         pick = non_max_suppression(rects, probs=None, overlapThresh=0.65)
 
         # draw final bounding boxes
+        bounded_box = None
         for (xA, yA, xB, yB) in pick:
             # here we assume one person is in the frame
-            
+            bounded_box = (xA, yA, xB, yB)
             cv2.rectangle(im, (xA, yA), (xB, yB), (0, 255,0), 2)
             
 
         # show images
         #cv2.imshow("Before", orig)
-        #cv2.imshow("After", im)
+        cv2.imshow("After", im)
         
-        return (xA, yA, xB, yB)
+        return bounded_box
         
         
-    def startRobot(self):
-        Thread(target=self.moveRobot, args=()).start()
-        return self
 
     def followHuman(self):
         bounded_box = self.detectHuman()
         mid_pt = ((bounded_box[0] + bounded_box[2]) / 2, (bounded_box[1] + bounded_box[3]) / 2)
         if (mid_pt > self.camera.resolution[0] / 3 and mid_pt > (self.camera.resolution[1] * 2) / 3):
             self.goForward()
-        else (mid_pt < self.camera.resolution[0] / 3):
+        elif (mid_pt < self.camera.resolution[0] / 3):
             self.bankLeft()
         else:
             self.bankRight()
     
+    def startupSensors(self):
+        self.camera.startStream()
+        self.microphone.startRecording()
+        time.sleep(1)
+
+    def quit(self):
+        self.camera.close()
+        self.microphone.close()
         
-        
-        
+    
+    def runStateMachine(self):
+        Thread(target=self.stateMachine, args=()).start()
+   
+    def runRobot(self):
+        while True:
+            print "Recording"
+            
+            if (self.microphone.startRecording()):
+                print "Done Recording"
+                self.on_event(self.microphone.read())
+                print self.state.__str__()
+                print self.state.__str__() == 'Idle' 
+                if (self.state.__str__() == 'Idle'):
+                    self.allStop()
+                elif (self.state.__str__() == 'FollowHumanIdle'):
+                    #self.camera.startStream()
+                    self.allStop()
+                elif (self.state.__str__() == 'FollowHuman'):
+                    self.followHuman()
+                elif (self.state.__str__() == 'VoiceControlIdle'):
+                    print "VCIdle"
+                    self.allStop()
+                elif (self.state.__str__() == 'Forward'):
+                    print "for"
+                    self.goForward()
+                elif (self.state.__str__() == 'RotateLeft'):
+                    print "RLeft"
+                    self.rotateLeft()
+                elif (self.state.__str__() == 'RotateRight'):
+                    self.rotateRight()
+                elif (self.state.__str__() == 'QuitApp'):
+                    self.quit()
+                    return
+    
+                time.sleep(2.0)
+
+ 
+    def stateMachine(self):
+        print "Starting recording"
+        prevState = None 
+        self.microphone.startRecording()
+        time.sleep(1.0)
+        while True:
+            if prevState != self.microphone.read():
+                prevState = self.microphone.read()
+                self.on_event(self.microphone.read())
+            time.sleep(1.0)
+            if (self.state.__str__() == "Idle"):
+                continue
+                #self.allStop()
+            elif (self.state.__str__() == "FollowHumanIdle"):
+                self.camera.startStream()
+                self.allStop()
+            elif (self.state.__str__() == "FollowHuman"):
+                self.followHuman()
+            elif (self.state.__str__() == "VoiceControlIdle"):
+                self.allStop()
+            elif (self.state.__str__() == "RotateLeft"):
+                self.rotateLeft()
+            elif (self.state.__str__() == "RotateRight"):
+                self.rotateRight()
+            elif (self.state.__str__() == "QuitApp"):
+                self.quit()
+                return
+             
+     
+
+if __name__ == '__main__':
+    rob = Robot()
+    rob.runRobot()
+
+    
         

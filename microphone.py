@@ -34,24 +34,34 @@ from __future__ import print_function
 import argparse
 import sys
 
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
+
 import tensorflow as tf
 import pyaudio
 import wave
 import math
 import audioop
 
+from threading import Thread
+import cv2
+import time
+import numpy as np
+
 # pylint: disable=unused-import
 from tensorflow.contrib.framework.python.ops import audio_ops as contrib_audio
 # pylint: enable=unused-import
 
-FLAGS = None
+graph_path = '/home/pi/ECE4180/tensorflowAudio/speech_commands/conv_actions_frozen.pb'
+labels_path = '/home/pi/ECE4180/tensorflowAudio/speech_commands/conv_actions_labels.txt'
+wav_path = './file.wav'
 FORMAT = pyaudio.paInt16
 CHANNELS = 1
 RATE = 16000
 CHUNK = 1024 
 RECORD_SECONDS = 1
 WAVE_OUTPUT_FILENAME = "file.wav"
-INTENSITY=100
+INTENSITY=150
 num_samples=50
 
 
@@ -59,12 +69,19 @@ class Microphone():
 
     def __init__(self):
         self.keyword = None
-        self.stop = False
+        self.stopped = False
 
-    def startRecording():
-        Thread(target=self.label_wav, args=()).start()
-        return self
- 
+    def startRecording(self):
+        #Thread(target=self.label_wav, args=(wav_path, labels_path, graph_path, 'wav_data:0','labels_softmax:0', 1)).start()
+        #return self
+        return self.label_wav(wav_path, labels_path, graph_path, 'wav_data:0','labels_softmax:0', 1)
+        
+
+    def read(self):
+        return self.keyword 
+
+    def close(self):
+        self.stopped = True
 
     def load_graph(self, filename):
       """Unpersists graph from file as default graph."""
@@ -92,12 +109,15 @@ class Microphone():
 
         # Sort to show labels in order of confidence
         top_k = predictions.argsort()[-num_top_predictions:][::-1]
-        #for node_id in top_k:
-        #  human_string = labels[node_id]
-        #  score = predictions[node_id]
-        #  print('%s (score = %.5f)' % (human_string, score))
+        
+        for node_id in top_k:
+          human_string = labels[node_id]
+          score = predictions[node_id]
+          print('%s (score = %.5f)' % (human_string, score))
 
-        self.keyword = labels[0]
+        
+        self.keyword = labels[np.argmax(predictions)]
+        print(self.keyword)
 
         return 0
 
@@ -113,10 +133,10 @@ class Microphone():
       if not graph or not tf.gfile.Exists(graph):
         tf.logging.fatal('Graph file does not exist %s', graph)
 
-      labels_list = load_labels(labels)
+      labels_list = self.load_labels(labels)
 
       # load graph, which is stored in the default session
-      load_graph(graph)
+      self.load_graph(graph)
 
 
       p = pyaudio.PyAudio()
@@ -127,8 +147,9 @@ class Microphone():
       prev_data3=[]
       prev_data4=[]
       while True:
+        
         stream = p.open(format=FORMAT, channels=CHANNELS,rate=RATE, input=True,frames_per_buffer=CHUNK)
-        cur_data = stream.read(CHUNK)
+        cur_data = stream.read(CHUNK) # exception_on_overflow=False)
         values = [math.sqrt(abs(audioop.avg(cur_data, 4)))
                   for x in range(num_samples)]
         values = sorted(values, reverse=True)
@@ -144,18 +165,24 @@ class Microphone():
           frames.append(prev_data4)
           frames.append(cur_data)
           for i in range(0, int(RATE / CHUNK * RECORD_SECONDS)):
-            data = stream.read(CHUNK)
+            data = stream.read(CHUNK) # exception_on_overflow=False)
             frames.append(data)
           print ('finished recording')
           waveFile = wave.open(WAVE_OUTPUT_FILENAME, 'wb')
           waveFile.setnchannels(CHANNELS)
           waveFile.setsampwidth(p.get_sample_size(FORMAT))
           waveFile.setframerate(RATE)
-          waveFile.writeframes(b''.join(frames))
+          #if type(frames) is str:
+          try:
+            waveFile.writeframes(b''.join(frames))
+          except TypeError:
+            print("Something went wrong...")
+            return False  
           waveFile.close()
           with open(wav, 'rb') as wav_file:
             wav_data = wav_file.read()
-          run_graph(wav_data, labels_list, input_name, output_name, how_many_labels)
+          self.run_graph(wav_data, labels_list, input_name, output_name, how_many_labels)
+          return True
         prev_data0=prev_data1
         prev_data1=prev_data2
         prev_data2=prev_data3
@@ -172,8 +199,8 @@ class Microphone():
 
 def main(_):
   """Entry point for script, converts flags to arguments."""
-  label_wav(FLAGS.wav, FLAGS.labels, FLAGS.graph, FLAGS.input_name,
-            FLAGS.output_name, FLAGS.how_many_labels)
+  
+  mic = Microphone().startRecording()
 
 
 if __name__ == '__main__':
@@ -199,7 +226,6 @@ if __name__ == '__main__':
       type=int,
       default=1,
       help='Number of results to show.')
-
-  FLAGS, unparsed = parser.parse_known_args()
-  print [sys.argv[0]] + unparsed
-  tf.app.run(main=main, argv=[sys.argv[0]] + unparsed)
+  #main()
+  #FLAGS, unparsed = parser.parse_known_args()
+  tf.app.run(main=main) #argv=[sys.argv[0]] + unparsed)
