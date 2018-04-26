@@ -1,3 +1,4 @@
+import sys
 import time
 from gpiozero import PWMOutputDevice
 from gpiozero import DigitalOutputDevice
@@ -10,6 +11,8 @@ from state import State
 from RobotState import Idle
 from microphone import Microphone
 from camera import Camera
+import signal
+
 ## Motor Driver GPIO Pins
 # Motor A, Left Side GPIO CONSTANTS
 PWM_DRIVE_LEFT   = 21
@@ -22,6 +25,8 @@ REVERSE_RIGHT_PIN = 6
 
 class Robot(State):
     def __init__(self):
+        self.sig_hndlr = signal.signal(signal.SIGINT, self.exit_gracefully)
+
         #set up GPIO
         self.driveLeft  = PWMOutputDevice(PWM_DRIVE_LEFT, True, 0, 1000)
         self.driveRight = PWMOutputDevice(PWM_DRIVE_RIGHT, True, 0, 1000)
@@ -138,18 +143,19 @@ class Robot(State):
             return
         mid_pt = (bounded_box[0] + bounded_box[2]) / 2
         if (mid_pt > (400*8) / 17 and mid_pt < (400*10) / 17):
-            #self.goForward()
+            self.goForward()
+            time.sleep(1.0)
             self.allStop()
             print "human in view"
         elif (mid_pt < (400*3) / 7):
             print "left side"        
             self.rotateLeft()
-            time.sleep(0.3)
+            time.sleep(0.1)
             self.allStop()
         else:
-            print "else"
+            print "right side"
             self.rotateRight()
-            time.sleep(0.3)
+            time.sleep(0.1)
             self.allStop()
     
     def startupSensors(self):
@@ -160,7 +166,7 @@ class Robot(State):
     def quit(self):
         self.camera.close()
         self.microphone.close()
-        
+        self.allStop() 
     
     def runStateMachine(self):
         Thread(target=self.stateMachine, args=()).start()
@@ -227,6 +233,10 @@ class Robot(State):
                 self.quit()
                 return
              
+    def exit_gracefully(self, signal, frame):
+        print('Trying to exit gracefully...')
+        self.quit()
+        sys.exit(0)
      
 
 if __name__ == '__main__':
