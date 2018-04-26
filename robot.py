@@ -69,16 +69,16 @@ class Robot(State):
         self.reverseLeft.value = False
         self.forwardRight.value = False
         self.reverseRight.value = True
-        self.driveLeft.value = 1.0
-        self.driveRight.value = 1.0
+        self.driveLeft.value = 0.4
+        self.driveRight.value = 0.4
 
     def rotateLeft(self):
         self.forwardLeft.value = False
         self.reverseLeft.value = True
         self.forwardRight.value = True
         self.reverseRight.value = False
-        self.driveLeft.value = 1.0
-        self.driveRight.value = 1.0
+        self.driveLeft.value = 0.4
+        self.driveRight.value = 0.4
 
     def bankRight(self):
         self.forwardLeft.value = True
@@ -127,20 +127,30 @@ class Robot(State):
         # show images
         #cv2.imshow("Before", orig)
         cv2.imshow("After", im)
-        
+        print bounded_box
         return bounded_box
         
         
 
     def followHuman(self):
         bounded_box = self.detectHuman()
-        mid_pt = ((bounded_box[0] + bounded_box[2]) / 2, (bounded_box[1] + bounded_box[3]) / 2)
-        if (mid_pt > self.camera.resolution[0] / 3 and mid_pt > (self.camera.resolution[1] * 2) / 3):
-            self.goForward()
-        elif (mid_pt < self.camera.resolution[0] / 3):
-            self.bankLeft()
+        if bounded_box == None:
+            return
+        mid_pt = (bounded_box[0] + bounded_box[2]) / 2
+        if (mid_pt > (400*8) / 17 and mid_pt < (400*10) / 17):
+            #self.goForward()
+            self.allStop()
+            print "human in view"
+        elif (mid_pt < (400*3) / 7):
+            print "left side"        
+            self.rotateLeft()
+            time.sleep(0.3)
+            self.allStop()
         else:
-            self.bankRight()
+            print "else"
+            self.rotateRight()
+            time.sleep(0.3)
+            self.allStop()
     
     def startupSensors(self):
         self.camera.startStream()
@@ -221,7 +231,11 @@ class Robot(State):
 
 if __name__ == '__main__':
     rob = Robot()
-    rob.runRobot()
+    rob.camera.startStream()
+    time.sleep(1.0)
+    while True:
+        rob.followHuman()
+        time.sleep(1.0)
 
     
         

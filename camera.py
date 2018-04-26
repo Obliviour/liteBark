@@ -118,7 +118,7 @@ class Camera():
             cv2.putText(im, "#{}".format(i+1), (x,y-15), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0,0,255), 2)
 
         cv2.imshow("Image", im)
-        cv2.waitKey(0)
+        v2.waitKey(0)
 
     def detectHuman(self):
         hog = cv2.HOGDescriptor()
@@ -139,9 +139,13 @@ class Camera():
         rects = np.array([[x, y, x + w, y + h] for (x, y, w, h) in rects])
         pick = non_max_suppression(rects, probs=None, overlapThresh=0.5)
 
+        bounding_box = None
         # draw final bounding boxes
         for (xA, yA, xB, yB) in pick:
+            bounding_box = (xA,yA,xB,yB)
             cv2.rectangle(im, (xA, yA), (xB, yB), (0, 255,0), 2)
+
+        print bounding_box
 
         # show images
         cv2.imshow("Before", orig)
