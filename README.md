@@ -4,11 +4,11 @@ A deep look into the performance of the Raspberry Pi for parallel processing of 
 
 ### Contents
 
-* [Installing from pip (easy)](#Overview)
-* [Building from source (hard)](#Purpose)
-* [Docker image](#Software Used and Parts List)
-* [Credits](#Results)
-* [License](#Future Work)
+* [Overview](#overview)
+* [Purpose](#purpose)
+* [Software Used and Parts List](#software-used-and-parts-list)
+* [Results](#results)
+* [Future Work](#future-work)
 
 
 ## Overview
