@@ -9,6 +9,8 @@ A deep look into the performance of the Raspberry Pi for parallel processing of 
 * [Software Used and Parts List](#software-used-and-parts-list)
 * [Results](#results)
 * [Future Work](#future-work)
+* [Installation of Tensorflow](#installing-tensorflow)
+* [Tensorflow for Audio Recognition](#creating-tensorflow-based-audio-recognition)
 
 
 ## Overview
@@ -61,16 +63,17 @@ Add additional wheel to front of the robot
 No Ethernet Cable (fully headless)
 
 
-### Installing Tensorflow:
+## Installing Tensorflow
+
+Below is taking from the following github readme by samjabrahams. A wonderful guide on getting tensorflow installed.
+https://github.com/samjabrahams/tensorflow-on-raspberry-pi. We need tensorflow 1.7 instead of 1.1. Be sure to get the correct file for the built tensorflow package.
 
 * [Installing from pip (easy)](#installing-from-pip)
 * [Building from source (hard)](#building-from-source)
 * [Docker image](#docker-image)
-* [Credits](#credits)
-* [License](#license)
+
 
 ## Installing from Pip
-**Note: These are unofficial binaries (though built from the minimally modified official source), and thus there is no expectation of support from the TensorFlow team. Please don't create issues for these files in the official TensorFlow repository.**
 
 This is the easiest way to get TensorFlow onto your Raspberry Pi 3. Note that currently, the pre-built binary is targeted for Raspberry Pi 3 running Raspbian 8.0 ("Jessie"), so this may or may not work for you. The specific OS release is the following:
 
@@ -88,9 +91,6 @@ sudo apt-get update
 # For Python 2.7
 sudo apt-get install python-pip python-dev
 
-# For Python 3.3+
-sudo apt-get install python3-pip python3-dev
-```
 
 Next, download the wheel file from this repository and install it:
 
@@ -142,43 +142,21 @@ sudo pip3 install tensorflow-1.1.0-cp34-cp34m-linux_armv7l.whl
 
 **Note: the provided binaries are for Python 2.7 and 3.4 _only_. If you've installed Python 3.5/3.6 from source on your machine, you'll need to either explicitly install these wheels for 3.4, or you'll need to build TensorFlow [from source](GUIDE.md). Once there's an officially supported installation of Python 3.5+, this repo will start including wheels for those versions.**
 
-## Building from Source
 
-[_Step-by-step guide_](GUIDE.md)
 
-If you aren't able to make the wheel file from the previous section work, you may need to build from source. Additionally, if you want to use features that have not been included in an official release, such as the [initial distributed runtime](https://github.com/tensorflow/tensorflow/tree/master/tensorflow/core/distributed_runtime), you'll have to build from source. Don't worry, as we've figured out most of the quirks of getting it right. The guide will be updated as needed to be as correct as possible.
+## Creating Tensorflow based Audio Recognition
 
-See the [step-by-step guide here](GUIDE.md). **Warning: it takes a while.**
+### Building a model:
+Following the link below to understand how to create a model and labels from wav file data
+https://www.tensorflow.org/versions/master/tutorials/audio_recognition
 
-## Non-Raspberry Pi Model 3 builds
+### Getting Audio File using PyAudio
+We want to stream audio files from an incoming wav file. The tutorial below explains how to do that
 
-There are numerous single-board computers available on the market, but binaries and build instructions aren't necessarily compatible with what's available in this repository. This is a list of resources to help those with non-RPi3 (or RPi 2) computers get up and running:
+Tutorial 1: http://www.kiranjose.in/blogs/speech-detection-with-tensorflow-1-4-on-raspberry-pi-3-part-1-getting-audio-file-using-pyaudio/ 
 
-* ODROID
-    * [Issue thread for ODROID](https://github.com/samjabrahams/tensorflow-on-raspberry-pi/issues/41)
-		* [NeoTitans guide to building on ODROID C2](https://www.neotitans.net/install-tensorflow-on-odroid-c2.html)
+### Streaming Audio File based on Intensity of sound from microphone
+Tutorial 2: http://www.kiranjose.in/blogs/speech-detection-with-tensorflow-1-4-on-raspberry-pi-3-part-2-live-audio-inferencing-using-pyaudio/
 
-## Credits
-
-While the final pieces of grunt work were done primarily by myself and @petewarden, this effort has been going on for almost as long as TensorFlow has been open-source, and involves work that spans multiple months in separate codebases. This is an incomprehensive list of people and their work I ran across while working on this.
-
-The majority of the source-building guide is a modified version of [these instructions for compiling TensorFlow on a Jetson TK1](http://cudamusing.blogspot.com/2015/11/building-tensorflow-for-jetson-tk1.html). Massimiliano, you are the real MVP. _Note: the TK1 guide was [updated on June 17, 2016](http://cudamusing.blogspot.com/2016/06/tensorflow-08-on-jetson-tk1.html)_
-
-@vmayoral put a huge amount of time and effort trying to put together the pieces to build TensorFlow, and was the first to get something close to a working binary.
-
-A bunch of awesome Googlers working in both the TensorFlow and Bazel repositories helped make this possible. In no particular order: @vrv, @damienmg, @petewarden, @danbri, @ulfjack, @girving, and @nlothian
-
-_Issue threads of interest:_
-
-* [Initial issue for building Bazel on ARMv7l](https://github.com/bazelbuild/bazel/issues/606)
-* [First thread about running TensorFlow on RPi](https://github.com/tensorflow/tensorflow/issues/254)
-* [Parallel thread on building TensorFlow on ARMv7l](https://github.com/tensorflow/tensorflow/issues/445)
-	* This is where the most recent conversation is located
-
-## License
-
-Subdirectories contained within the `third_party` directory each contain relevant licenses for the code and software within those subdirectories.
-
-The file TENSORFLOW_LICENSE applies to the binaries distributed in the [releases.](https://github.com/samjabrahams/tensorflow-on-raspberry-pi/releases)
-
-The file LICENSE applies to other files in this repository. I want to stress that a majority of the lines of code found in the guide of this repository was created by others. If any of those original authors want more prominent attribution, please contact me and we can figure out how to make it acceptable.
+### Github code for the above two tutorials
+Github code: https://github.com/kiranjose/python-tensorflow-speech-recognition
