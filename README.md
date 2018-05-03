@@ -1,6 +1,10 @@
 # liteBark
 A deep look into the performance of the Raspberry Pi for parallel processing of speech recognition and object detection
 
+## Authors
+Victor Barr
+Derin Ozturk
+
 
 ### Contents
 
