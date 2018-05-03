@@ -11,6 +11,8 @@ A deep look into the performance of the Raspberry Pi for parallel processing of 
 * [Future Work](#future-work)
 * [Installation of Tensorflow](#installing-tensorflow)
 * [Tensorflow for Audio Recognition](#creating-tensorflow-based-audio-recognition)
+* [Installing OpenCV on Raspberry Pi 3](#installing-opencv-on-raspberry-pi-3)
+* [Installing Other Libraries Used for Human Detection](#installing-other-libraries)
 
 
 ## Overview
