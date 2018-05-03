@@ -62,7 +62,6 @@ Add additional wheel to front of the robot
 3D print pi mount, more solid wires
 No Ethernet Cable (fully headless)
 
-
 ## Installing Tensorflow
 
 Below is taking from the following github readme by samjabrahams. A wonderful guide on getting tensorflow installed.
@@ -160,3 +159,12 @@ Tutorial 2: http://www.kiranjose.in/blogs/speech-detection-with-tensorflow-1-4-o
 
 ### Github code for the above two tutorials
 Github code: https://github.com/kiranjose/python-tensorflow-speech-recognition
+
+## Installing OpenCV on Raspberry Pi 3
+To install OpenCV from source onto the Raspbian Pi 3 on Raspbian use follow the steps found here: https://www.pyimagesearch.com/2016/04/18/install-guide-raspberry-pi-3-raspbian-jessie-opencv-3/. This tutorial also goes over using virtual environments in python which we highly recommend.
+
+## Installing Other Libraries Used for Human Detection
+To use our human detection methods, you must install the imutils package using pip. To do this:
+``` shell
+pip install imutils
+```
