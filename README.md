@@ -9,6 +9,7 @@ Derin Ozturk
 ### Contents
 
 * [Overview](#overview)
+* [Running Code From Pi](#runningcode)
 * [Purpose](#purpose)
 * [Software Used and Parts List](#software-used-and-parts-list)
 * [Results](#results)
@@ -25,6 +26,20 @@ Human Tracking – Detect the location of humans and follow/turn towards them
 Speech Enabled – Voice enabled commands to turn, go forward, and stop
 Light Tracking – Follow highest intensity of light 
 
+## Running Code
+Installation of software on pi was done in python virtual environments located in 
+    
+    /home/pi/.virtualenvs/cv
+    
+Add software environments to path by doing the following: 
+
+    cd ~
+    source .profile
+    workon cv
+    
+Note Tensorflow was accidently not placed in the virtual environment. This virtual environment
+just adds the software packages to the root directory.
+
 ## Purpose: 
 Understand the performance capabilities of the Raspberry Pi for machine learning applications
 Can it train models? Build Tensorflow? Run multiple threads?
@@ -32,7 +47,8 @@ Power Consumption? Overheating?
 
 ## Software Used and Parts List
 #### Software Used
-    Tensorflow 
+    Tensorflow 1.7
+    
     60,000+ .wav file model
     “Go”, “Stop”, “Left”, “Right”, “Yes”, “No”, “Up”, “Down”
     OpenCV
