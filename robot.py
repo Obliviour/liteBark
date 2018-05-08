@@ -254,11 +254,11 @@ class Robot(State):
 
 if __name__ == '__main__':
     rob = Robot()
-    rob.camera.startStream()
+    #rob.camera.startStream()
     time.sleep(1.0)
     
-	while True:
-		rob.followSpeech()
+    while True:
+        rob.followSpeech()
         # rob.followHuman()
 
     
