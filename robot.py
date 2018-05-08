@@ -204,7 +204,7 @@ class Robot(State):
     
                 time.sleep(2.0)
 
-	def followSpeech(self):
+    def followSpeech(self):
         while True:
             if (self.microphone.startRecording()):
                 print "Done Recording"
@@ -256,7 +256,7 @@ if __name__ == '__main__':
     rob = Robot()
     #rob.camera.startStream()
     time.sleep(1.0)
-    
+ 
     while True:
         rob.followSpeech()
         # rob.followHuman()
