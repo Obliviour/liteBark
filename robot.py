@@ -216,6 +216,8 @@ class Robot(State):
                     self.rotateLeft()
                 elif(self.state.__str__() == "right"):
                     self.rotateRight()
+                time.sleep(0.5)
+                self.allStop()
                 return
  
     def stateMachine(self):
