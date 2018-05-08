@@ -205,18 +205,18 @@ class Robot(State):
                 time.sleep(2.0)
 
 	def followSpeech(self):
-		while True:
-			if (self.microphone.startRecording()):
-				print "Done Recording"
-				print self.microphone.read()
-				self.state = self.microphone.read()
-				if (self.state.__str__() == "go"):
-					self.goForward()
-				elif(self.state.__str__() == "left"):
-					self.rotateLeft()
-				elif(self.state.__str__() == "right"):
-					self.rotateRight()
-
+        while True:
+            if (self.microphone.startRecording()):
+                print "Done Recording"
+                print self.microphone.read()
+                self.state = self.microphone.read()
+                if (self.state.__str__() == "go"):
+                    self.goForward()
+                elif(self.state.__str__() == "left"):
+                    self.rotateLeft()
+                elif(self.state.__str__() == "right"):
+                    self.rotateRight()
+                return
  
     def stateMachine(self):
         print "Starting recording"
@@ -257,8 +257,8 @@ if __name__ == '__main__':
     rob.camera.startStream()
     time.sleep(1.0)
     
-	while True:
-		rob.followSpeech()
+    while True:
+        rob.followSpeech()
         # rob.followHuman()
 
     
