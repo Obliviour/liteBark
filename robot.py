@@ -245,7 +245,6 @@ if __name__ == '__main__':
     time.sleep(1.0)
     while True:
         rob.followHuman()
-        time.sleep(1.0)
 
     
         
