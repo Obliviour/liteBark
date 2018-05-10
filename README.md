@@ -40,6 +40,11 @@ Add software environments to path by doing the following:
 Note Tensorflow was accidently not placed in the virtual environment. This virtual environment
 just adds the software packages to the root directory.
 
+Run Demo through the following:
+    
+    cd /home/pi/ECE4180
+    python robot.py
+
 ## Purpose: 
 Understand the performance capabilities of the Raspberry Pi for machine learning applications
 Can it train models? Build Tensorflow? Run multiple threads?
