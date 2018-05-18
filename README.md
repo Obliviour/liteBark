@@ -16,9 +16,10 @@ Derin Ozturk
 * [Future Work](#future-work)
 * [Installation of Tensorflow](#installing-tensorflow)
 * [Tensorflow for Audio Recognition](#creating-tensorflow-based-audio-recognition)
-* [Installing OpenCV on Raspberry Pi 3](#installing-opencv-on-raspberry-pi-3)
-* [Installing Other Libraries Used for Human Detection](#installing-other-libraries)
-
+* [Installing OpenCV on Raspberry Pi 3b+](#installing-opencv-on-raspberry-pi-3)
+* [OpenCV on Raspberry Pi 3b+](#creating-opencv-based-human-tracking)
+* [Installing Other Libraries Used for Human Detection](#installing-other-libraries-used-for-human-detection)
+* [Motor Control of the Robot](#motor-control-of-the-robot)
 
 ## Overview
 Main goals: 
@@ -31,7 +32,7 @@ Installation of software on pi was done in python virtual environments located i
     
     /home/pi/.virtualenvs/cv
     
-Add software environments to path by doing the following: 
+Add software environments to path by doing the following:
 
     cd ~
     source .profile
@@ -39,6 +40,22 @@ Add software environments to path by doing the following:
     
 Note Tensorflow was accidently not placed in the virtual environment. This virtual environment
 just adds the software packages to the root directory.
+
+There are three possible Demos to run:
+    
+#### Demo 1: Speech Enabled Tracking of robot     
+    cd /home/pi/liteBark
+    python robot.py -S
+#### Demo 2: Human Following of robot
+    cd /home/pi/liteBark
+    python robot.py -H
+#### Demo 3: Speech Recognition 
+    cd /home/pi/liteBark/tensorflowAudio
+    python wav_trigger_inference.py
+    
+## ssh ip address
+wifi: 1 4 3 . 2 1 5 . one zero six . two one one
+ethernet: 1 6 9 . 2 5 4 . two four seven . two two seven
 
 ## Purpose: 
 Understand the performance capabilities of the Raspberry Pi for machine learning applications
@@ -185,8 +202,15 @@ Github code: https://github.com/kiranjose/python-tensorflow-speech-recognition
 ## Installing OpenCV on Raspberry Pi 3
 To install OpenCV from source onto the Raspbian Pi 3 on Raspbian use follow the steps found here: https://www.pyimagesearch.com/2016/04/18/install-guide-raspberry-pi-3-raspbian-jessie-opencv-3/. This tutorial also goes over using virtual environments in python which we highly recommend.
 
+## Creating Opencv Based Human Tracking
+Follow this tutorial and the camera.py class for info on this section:
+https://www.pyimagesearch.com/2015/11/09/pedestrian-detection-opencv/
+
 ## Installing Other Libraries Used for Human Detection
 To use our human detection methods, you must install the imutils package using pip. To do this:
 ``` shell
 pip install imutils
 ```
+
+## Motor Control of the Robot
+Follow the code in robot.py from lines 16 down. This is commented inline
