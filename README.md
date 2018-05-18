@@ -18,7 +18,7 @@ Derin Ozturk
 * [Tensorflow for Audio Recognition](#creating-tensorflow-based-audio-recognition)
 * [Installing OpenCV on Raspberry Pi 3b+](#installing-opencv-on-raspberry-pi-3)
 * [OpenCV on Raspberry Pi 3b+](#creating-opencv-based-human-tracking)
-* [Installing Other Libraries Used for Human Detection](#installing-other-libraries)
+* [Installing Other Libraries Used for Human Detection](#installing-other-libraries-used-for-human-detection)
 * [Motor Control of the Robot](#motor-control-of-the-robot)
 
 ## Overview
@@ -52,6 +52,11 @@ There are three possible Demos to run:
 #### Demo 3: Speech Recognition 
     cd /home/pi/liteBark/tensorflowAudio
     python wav_trigger_inference.py
+    
+## ssh ip address
+wifi: 1 4 3 . 2 1 5 . one zero six . two one one
+ethernet: 1 6 9 . 2 5 4 . two four seven . two two seven
+
 ## Purpose: 
 Understand the performance capabilities of the Raspberry Pi for machine learning applications
 Can it train models? Build Tensorflow? Run multiple threads?
