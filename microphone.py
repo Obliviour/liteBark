@@ -52,8 +52,8 @@ import numpy as np
 from tensorflow.contrib.framework.python.ops import audio_ops as contrib_audio
 # pylint: enable=unused-import
 
-graph_path = '/home/pi/ECE4180/tensorflowAudio/speech_commands/conv_actions_frozen.pb'
-labels_path = '/home/pi/ECE4180/tensorflowAudio/speech_commands/conv_actions_labels.txt'
+graph_path = '/home/pi/liteBark/tensorflowAudio/speech_commands/conv_actions_frozen.pb'
+labels_path = '/home/pi/liteBark/tensorflowAudio/speech_commands/conv_actions_labels.txt'
 wav_path = './file.wav'
 FORMAT = pyaudio.paInt16
 CHANNELS = 1

@@ -187,7 +187,7 @@ if __name__ == '__main__':
       help='Number of results to show.')
 
   #FLAGS, unparsed = parser.parse_known_args()
-  gr_path = "/home/pi/ECE4180/tensorflowAudio/speech_commands/conv_actions_frozen.pb"
-  labels_path = "/home/pi/ECE4180/tensorflowAudio/speech_commands/conv_actions_labels.txt"
+  gr_path = "/home/pi/liteBark/tensorflowAudio/speech_commands/conv_actions_frozen.pb"
+  labels_path = "/home/pi/liteBark/tensorflowAudio/speech_commands/conv_actions_labels.txt"
   wav_path = "./file.wav"
   tf.app.run(main=main) # argv=[sys.argv[0]] + unparsed)

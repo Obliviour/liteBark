@@ -16,7 +16,7 @@ import signal
 ## Motor Driver GPIO Pins
 # Motor A, Left Side GPIO CONSTANTS
 PWM_DRIVE_LEFT   = 21
-FORWARD_LEFT_PIN     = 26
+FORWARD_LEFT_PIN = 26
 REVERSE_LEFT_PIN = 19
 # Motor B, Right Side GPIO CONSTANTS
 PWM_DRIVE_RIGHT   = 5
@@ -74,16 +74,16 @@ class Robot(State):
         self.reverseLeft.value = False
         self.forwardRight.value = False
         self.reverseRight.value = True
-        self.driveLeft.value = 0.4
-        self.driveRight.value = 0.4
+        self.driveLeft.value = 0.8
+        self.driveRight.value = 0.8
 
     def rotateLeft(self):
         self.forwardLeft.value = False
         self.reverseLeft.value = True
         self.forwardRight.value = True
         self.reverseRight.value = False
-        self.driveLeft.value = 0.4
-        self.driveRight.value = 0.4
+        self.driveLeft.value = 0.8
+        self.driveRight.value = 0.8
 
     def bankRight(self):
         self.forwardLeft.value = True
@@ -138,24 +138,29 @@ class Robot(State):
         
 
     def followHuman(self):
+        # Variables to Change
+        binsize = 17
+        turningTime = 0.2
+        midrange_L = 7
+        midrange_R = 11
         bounded_box = self.detectHuman()
         if bounded_box == None:
             return
         mid_pt = (bounded_box[0] + bounded_box[2]) / 2
-        if (mid_pt > (400*8) / 17 and mid_pt < (400*10) / 17):
+        if (mid_pt > (400*midrange_L) / binsize and mid_pt < (400*midrange_R) / binsize):
             self.goForward()
             time.sleep(1.0)
             self.allStop()
             print "human in view"
-        elif (mid_pt < (400*3) / 7):
+        elif (mid_pt < (400*midrange_L) / binsize):
             print "left side"        
             self.rotateLeft()
-            time.sleep(0.1)
+            time.sleep(turningTime)
             self.allStop()
         else:
             print "right side"
             self.rotateRight()
-            time.sleep(0.1)
+            time.sleep(turningTime)
             self.allStop()
     
     def startupSensors(self):
@@ -216,7 +221,7 @@ class Robot(State):
                     self.rotateLeft()
                 elif(self.state.__str__() == "right"):
                     self.rotateRight()
-                time.sleep(0.5)
+                time.sleep(1.0)
                 self.allStop()
                 return
  
@@ -256,12 +261,18 @@ class Robot(State):
 
 if __name__ == '__main__':
     rob = Robot()
-    #rob.camera.startStream()
     time.sleep(1.0)
- 
+
+    if (sys.argv[1] = "-H"):
+        rob.camera.startStream()
+        time.sleep(1.0)
     while True:
-        rob.followSpeech()
-        # rob.followHuman()
+        if (sys.argv[1] == "-S"):
+            rob.followSpeech()
+        elif (sys.argv[1] == "-H"):
+            rob.followHuman()
+        else:
+            sys.exit(0)
 
     
         
