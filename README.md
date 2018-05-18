@@ -31,7 +31,7 @@ Installation of software on pi was done in python virtual environments located i
     
     /home/pi/.virtualenvs/cv
     
-Add software environments to path by doing the following: 
+Add software environments to path by doing the following:
 
     cd ~
     source .profile
@@ -40,11 +40,17 @@ Add software environments to path by doing the following:
 Note Tensorflow was accidently not placed in the virtual environment. This virtual environment
 just adds the software packages to the root directory.
 
-Run Demo through the following:
+There are three possible Demos to run:
     
-    cd /home/pi/ECE4180
-    python robot.py
-
+#### Demo 1: Speech Enabled Tracking of robot     
+    cd /home/pi/liteBark
+    python robot.py -S
+#### Demo 2: Human Following of robot
+    cd /home/pi/liteBark
+    python robot.py -H
+#### Demo 3: Speech Recognition 
+    cd /home/pi/liteBark/tensorflowAudio
+    python wav_trigger_inference.py
 ## Purpose: 
 Understand the performance capabilities of the Raspberry Pi for machine learning applications
 Can it train models? Build Tensorflow? Run multiple threads?
