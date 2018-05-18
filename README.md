@@ -16,9 +16,10 @@ Derin Ozturk
 * [Future Work](#future-work)
 * [Installation of Tensorflow](#installing-tensorflow)
 * [Tensorflow for Audio Recognition](#creating-tensorflow-based-audio-recognition)
-* [Installing OpenCV on Raspberry Pi 3](#installing-opencv-on-raspberry-pi-3)
+* [Installing OpenCV on Raspberry Pi 3b+](#installing-opencv-on-raspberry-pi-3)
+* [OpenCV on Raspberry Pi 3b+](#creating-opencv-based-human-tracking)
 * [Installing Other Libraries Used for Human Detection](#installing-other-libraries)
-
+* [Motor Control of the Robot](#motor-control-of-the-robot)
 
 ## Overview
 Main goals: 
@@ -196,8 +197,15 @@ Github code: https://github.com/kiranjose/python-tensorflow-speech-recognition
 ## Installing OpenCV on Raspberry Pi 3
 To install OpenCV from source onto the Raspbian Pi 3 on Raspbian use follow the steps found here: https://www.pyimagesearch.com/2016/04/18/install-guide-raspberry-pi-3-raspbian-jessie-opencv-3/. This tutorial also goes over using virtual environments in python which we highly recommend.
 
+## Creating Opencv Based Human Tracking
+Follow this tutorial and the camera.py class for info on this section:
+https://www.pyimagesearch.com/2015/11/09/pedestrian-detection-opencv/
+
 ## Installing Other Libraries Used for Human Detection
 To use our human detection methods, you must install the imutils package using pip. To do this:
 ``` shell
 pip install imutils
 ```
+
+## Motor Control of the Robot
+Follow the code in robot.py from lines 16 down. This is commented inline
